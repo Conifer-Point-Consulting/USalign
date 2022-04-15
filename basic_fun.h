@@ -160,11 +160,18 @@ size_t get_PDB_lines(const string filename,
     bool select_atom=false;
     size_t model_idx=0;
     vector<string> tmp_str_vec;
-    istringstream iss;
-    bool is_raw_string = false;
-    
-    int compress_type=0; // uncompressed file
+
+    // Set up stream
+    // This stream will be one of:
+    // - compressed filestream, if comp library available and file ends gz / bz2
+    // - string stream, if filename contains a newline
+    // - stdin, if filename is "-"
+    // - uncompressed filestream, otherwise
+    istream *stream;
+
     ifstream fin;
+    istringstream iss;
+
 #ifndef REDI_PSTREAM_H_SEEN
     ifstream fin_gz;
 #else
@@ -173,41 +180,38 @@ size_t get_PDB_lines(const string filename,
         filename.substr(filename.size()-3,3)==".gz")
     {
         fin_gz.open("gunzip -c '"+filename+"'");
-        compress_type=1;
+        stream = &fin_gz;
     }
     else if (filename.size()>=4 && 
         filename.substr(filename.size()-4,4)==".bz2")
     {
         fin_gz.open("bzcat '"+filename+"'");
-        compress_type=2;
+        stream = &fin_gz;
     }
     else
 #endif
     if (filename.find('\n') != string::npos) {
         // If there is a newline in the "filename", assume it is actually pdb data
-        is_raw_string = true;
         iss = istringstream(filename);
-    } else {
-        if (filename=="-") compress_type=-1;
-        else fin.open(filename.c_str());
+        stream = &iss;
     }
+    else if (filename=="-")
+    {
+        stream = &cin;
+    }
+    else
+    {
+        fin.open(filename.c_str());
+        stream = &fin;
+    }
+
+    // Now we have a stream, process lines, depending on format
 
     if (infmt_opt==0||infmt_opt==-1) // PDB format
     {
-        // 4 cases: stdin, compressed, file stream, string stream
-        while (
-            compress_type == -1 ? cin.good()         // stdin
-                : (compress_type > 0 ? fin_gz.good() // compressed file stream
-                    : (is_raw_string ? !iss.eof()    // stream stream
-                        : fin.good()                 // uncompressed file stream
-                    )
-                )
-        )
+        while (stream->good())
         {
-            if  (compress_type==-1) getline(cin, line);
-            else if(is_pdb_str) getline(iss, line);
-            else if (compress_type) getline(fin_gz, line);
-            else                    getline(fin, line);
+            getline(*stream, line);
             if (infmt_opt==-1 && line.compare(0,5,"loop_")==0) // PDBx/mmCIF
                 return get_PDB_lines(filename,PDB_lines,chainID_list,
                     mol_vec, ter_opt, 3, atom_opt, split_opt,het_opt);
@@ -298,26 +302,12 @@ size_t get_PDB_lines(const string filename,
         size_t L=0;
         float x,y,z;
         stringstream i8_stream;
-        while ((compress_type==-1)?cin.good():(compress_type?fin_gz.good():fin.good()))
+        while (stream->good())
         {
-            if  (compress_type==-1)
-            {
-                cin>>L>>x>>y>>z;
-                getline(cin, line);
-                if (!cin.good()) break;
-            }
-            else if (compress_type)
-            {
-                fin_gz>>L>>x>>y>>z;
-                getline(fin_gz, line);
-                if (!fin_gz.good()) break;
-            }
-            else
-            {
-                fin   >>L>>x>>y>>z;
-                getline(fin, line);
-                if (!fin.good()) break;
-            }
+            (*stream)>>L>>x>>y>>z;
+            getline(*stream, line);
+            if (!stream->good()) break;
+
             model_idx++;
             stringstream i8_stream;
             i8_stream << ':' << model_idx;
@@ -326,9 +316,7 @@ size_t get_PDB_lines(const string filename,
             mol_vec.push_back(0);
             for (i=0;i<L;i++)
             {
-                if  (compress_type==-1) cin>>x>>y>>z;
-                else if (compress_type) fin_gz>>x>>y>>z;
-                else                    fin   >>x>>y>>z;
+                (*stream)>>x>>y>>z;
                 i8_stream<<"ATOM   "<<setw(4)<<i+1<<"  CA  UNK  "<<setw(4)
                     <<i+1<<"    "<<setiosflags(ios::fixed)<<setprecision(3)
                     <<setw(8)<<x<<setw(8)<<y<<setw(8)<<z;
@@ -336,35 +324,27 @@ size_t get_PDB_lines(const string filename,
                 i8_stream.str(string());
                 PDB_lines.back().push_back(line);
             }
-            if  (compress_type==-1) getline(cin, line);
-            else if (compress_type) getline(fin_gz, line);
-            else                    getline(fin, line);
+            getline(*stream, line);
         }
     }
     else if (infmt_opt==2) // xyz format
     {
         size_t L=0;
         stringstream i8_stream;
-        while ((compress_type==-1)?cin.good():(compress_type?fin_gz.good():fin.good()))
+        while (stream->good())
         {
-            if (compress_type==-1)  getline(cin, line);
-            else if (compress_type) getline(fin_gz, line);
-            else                    getline(fin, line);
+            getline(*stream, line);
             L=atoi(line.c_str());
-            if (compress_type==-1)  getline(cin, line);
-            else if (compress_type) getline(fin_gz, line);
-            else                    getline(fin, line);
+            getline(*stream, line);
             for (i=0;i<line.size();i++)
                 if (line[i]==' '||line[i]=='\t') break;
-            if (!((compress_type==-1)?cin.good():(compress_type?fin_gz.good():fin.good()))) break;
+            if (!stream->good()) break;
             chainID_list.push_back(':'+line.substr(0,i));
             PDB_lines.push_back(tmp_str_vec);
             mol_vec.push_back(0);
             for (i=0;i<L;i++)
             {
-                if (compress_type==-1)  getline(cin, line);
-                else if (compress_type) getline(fin_gz, line);
-                else                    getline(fin, line);
+                getline(*stream, line);
                 i8_stream<<"ATOM   "<<setw(4)<<i+1<<"  CA  "
                     <<AAmap(line[0])<<"  "<<setw(4)<<i+1<<"    "
                     <<line.substr(2,8)<<line.substr(11,8)<<line.substr(20,8);
@@ -392,11 +372,9 @@ size_t get_PDB_lines(const string filename,
         string prev_resi="";
         string model_index=""; // the same as model_idx but type is string
         stringstream i8_stream;
-        while ((compress_type==-1)?cin.good():(compress_type?fin_gz.good():fin.good()))
+        while (stream->good())
         {
-            if (compress_type==-1)  getline(cin, line);
-            else if (compress_type) getline(fin_gz, line);
-            else                    getline(fin, line);
+            getline(*stream, line);
             if (line.size()==0) continue;
             if (loop_) loop_ = (line.size()>=2)?(line.compare(0,2,"# ")):(line.compare(0,1,"#"));
             if (!loop_)
@@ -404,22 +382,9 @@ size_t get_PDB_lines(const string filename,
                 if (line.compare(0,5,"loop_")) continue;
                 while(1)
                 {
-                    if (compress_type==-1)
-                    {
-                        if (cin.good()) getline(cin, line);
-                        else PrintErrorAndQuit("ERROR! Unexpected end of -");
-                    }
-                    else if (compress_type)
-                    {
-                        if (fin_gz.good()) getline(fin_gz, line);
-                        else PrintErrorAndQuit("ERROR! Unexpected end of "+filename);
-                    }
-                    else
-                    {
-                        if (fin.good()) getline(fin, line);
-                        else PrintErrorAndQuit("ERROR! Unexpected end of "+filename);
-                    }
-                    if (line.size()) break;
+                  if (stream->good()) getline(*stream, line);
+                  else PrintErrorAndQuit("ERROR! Unexpected end of "+filename);
+                  if (line.size()) break;
                 }
                 if (line.compare(0,11,"_atom_site.")) continue;
 
@@ -430,9 +395,7 @@ size_t get_PDB_lines(const string filename,
 
                 while(1)
                 {
-                    if  (compress_type==-1) getline(cin, line);
-                    else if (compress_type) getline(fin_gz, line);
-                    else                    getline(fin, line);
+                    getline(*stream, line);
                     if (line.size()==0) continue;
                     if (line.compare(0,11,"_atom_site.")) break;
                     _atom_site[Trim(line.substr(11))]=++atom_site_pos;
@@ -574,8 +537,7 @@ size_t get_PDB_lines(const string filename,
         AA.clear();
     }
 
-    if      (compress_type>=1) fin_gz.close();
-    else if (compress_type==0) fin.close();
+    if      (filestream.is_open()) filestream.close();
     line.clear();
     if (!split_opt) chainID_list.push_back("");
     return PDB_lines.size();
