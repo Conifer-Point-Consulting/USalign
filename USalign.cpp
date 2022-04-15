@@ -4,24 +4,6 @@
 
 using namespace std;
 
-struct TMatrix {
-    double transform[3];
-    double rotation_matrix[3][3];
-
-    void print_transform() {
-        printf("Transform: %f\t%f\t%f\n", transform[0], transform[1], transform[2]);
-    }
-    void print_rotation() {
-        printf("Rotation Matrix:\n");
-        for(int i = 0; i < 3; i++) {
-            for(int j = 0; j < 3; j++) {
-                printf("%f\t", rotation_matrix[i][j]);
-            }
-            printf("\n");
-        }
-    }
-};
-
 void print_version()
 {
     cout << 
@@ -227,7 +209,7 @@ int TMalign(string &xname, string &yname, const string &fname_super,
     const string &atom_opt, const string &mol_opt, const string &dir_opt,
     const string &dir1_opt, const string &dir2_opt, const int byresi_opt,
     const vector<string> &chain1_list, const vector<string> &chain2_list,
-    const bool se_opt, TMatrix &tmatrix)
+    const bool se_opt)
 {
     /* declare previously global variables */
     vector<vector<string> >PDB_lines1; // text of chain1
@@ -420,20 +402,6 @@ int TMalign(string &xname, string &yname, const string &fname_super,
                         outfmt_opt, ter_opt, false, split_opt, o_opt,
                         fname_super, i_opt, a_opt, u_opt, d_opt, mirror_opt,
                         resi_vec1, resi_vec2);
-                    
-                    tmatrix.transform[0] = t0[0];
-                    tmatrix.transform[1] = t0[1];
-                    tmatrix.transform[2] = t0[2];
-                    tmatrix.rotation_matrix[0][0] = u0[0][0];
-                    tmatrix.rotation_matrix[0][1] = u0[0][1];
-                    tmatrix.rotation_matrix[0][2] = u0[0][2];
-                    tmatrix.rotation_matrix[1][0] = u0[1][0];
-                    tmatrix.rotation_matrix[1][1] = u0[1][1];
-                    tmatrix.rotation_matrix[1][2] = u0[1][2];
-                    tmatrix.rotation_matrix[2][0] = u0[2][0];
-                    tmatrix.rotation_matrix[2][1] = u0[2][1];
-                    tmatrix.rotation_matrix[2][2] = u0[2][2];
-
 
                     /* Done! Free memory */
                     seqM.clear();
@@ -2034,434 +2002,434 @@ int mTMalign(string &xname, string &yname, const string &fname_super,
     return 1;
 }
 
-// int main(int argc, char *argv[])
-// {
-//     if (argc < 2) print_help();
+int main(int argc, char *argv[])
+{
+    if (argc < 2) print_help();
 
 
-//     clock_t t1, t2;
-//     t1 = clock();
+    clock_t t1, t2;
+    t1 = clock();
 
-//     /**********************/
-//     /*    get argument    */
-//     /**********************/
-//     string xname       = "";
-//     string yname       = "";
-//     string fname_super = ""; // file name for superposed structure
-//     string fname_lign  = ""; // file name for user alignment
-//     string fname_matrix= ""; // file name for output matrix
-//     vector<string> sequence; // get value from alignment file
-//     double Lnorm_ass, d0_scale;
+    /**********************/
+    /*    get argument    */
+    /**********************/
+    string xname       = "";
+    string yname       = "";
+    string fname_super = ""; // file name for superposed structure
+    string fname_lign  = ""; // file name for user alignment
+    string fname_matrix= ""; // file name for output matrix
+    vector<string> sequence; // get value from alignment file
+    double Lnorm_ass, d0_scale;
 
-//     bool h_opt = false; // print full help message
-//     bool v_opt = false; // print version
-//     bool m_opt = false; // flag for -m, output rotation matrix
-//     int  i_opt = 0;     // 1 for -i, 3 for -I
-//     int  o_opt = 0;     // 1 for -o, 2 for -rasmol
-//     int  a_opt = 0;     // flag for -a, do not normalized by average length
-//     bool u_opt = false; // flag for -u, normalized by user specified length
-//     bool d_opt = false; // flag for -d, user specified d0
+    bool h_opt = false; // print full help message
+    bool v_opt = false; // print version
+    bool m_opt = false; // flag for -m, output rotation matrix
+    int  i_opt = 0;     // 1 for -i, 3 for -I
+    int  o_opt = 0;     // 1 for -o, 2 for -rasmol
+    int  a_opt = 0;     // flag for -a, do not normalized by average length
+    bool u_opt = false; // flag for -u, normalized by user specified length
+    bool d_opt = false; // flag for -d, user specified d0
 
-//     bool   full_opt  = false;// do not show chain level alignment
-//     double TMcut     =-1;
-//     bool   se_opt    =false;
-//     int    infmt1_opt=-1;    // PDB or PDBx/mmCIF format for chain_1
-//     int    infmt2_opt=-1;    // PDB or PDBx/mmCIF format for chain_2
-//     int    ter_opt   =2;     // END, or different chainID
-//     int    split_opt =2;     // split each chains
-//     int    outfmt_opt=0;     // set -outfmt to full output
-//     bool   fast_opt  =false; // flags for -fast, fTM-align algorithm
-//     int    cp_opt    =0;     // do not check circular permutation
-//     int    mirror_opt=0;     // do not align mirror
-//     int    het_opt=0;        // do not read HETATM residues
-//     int    mm_opt=0;         // do not perform MM-align
-//     string atom_opt  ="auto";// use C alpha atom for protein and C3' for RNA
-//     string mol_opt   ="auto";// auto-detect the molecule type as protein/RNA
-//     string suffix_opt="";    // set -suffix to empty
-//     string dir_opt   ="";    // set -dir to empty
-//     string dir1_opt  ="";    // set -dir1 to empty
-//     string dir2_opt  ="";    // set -dir2 to empty
-//     int    byresi_opt=0;     // set -byresi to 0
-//     vector<string> chain1_list; // only when -dir1 is set
-//     vector<string> chain2_list; // only when -dir2 is set
+    bool   full_opt  = false;// do not show chain level alignment
+    double TMcut     =-1;
+    bool   se_opt    =false;
+    int    infmt1_opt=-1;    // PDB or PDBx/mmCIF format for chain_1
+    int    infmt2_opt=-1;    // PDB or PDBx/mmCIF format for chain_2
+    int    ter_opt   =2;     // END, or different chainID
+    int    split_opt =2;     // split each chains
+    int    outfmt_opt=0;     // set -outfmt to full output
+    bool   fast_opt  =false; // flags for -fast, fTM-align algorithm
+    int    cp_opt    =0;     // do not check circular permutation
+    int    mirror_opt=0;     // do not align mirror
+    int    het_opt=0;        // do not read HETATM residues
+    int    mm_opt=0;         // do not perform MM-align
+    string atom_opt  ="auto";// use C alpha atom for protein and C3' for RNA
+    string mol_opt   ="auto";// auto-detect the molecule type as protein/RNA
+    string suffix_opt="";    // set -suffix to empty
+    string dir_opt   ="";    // set -dir to empty
+    string dir1_opt  ="";    // set -dir1 to empty
+    string dir2_opt  ="";    // set -dir2 to empty
+    int    byresi_opt=0;     // set -byresi to 0
+    vector<string> chain1_list; // only when -dir1 is set
+    vector<string> chain2_list; // only when -dir2 is set
 
-//     for(int i = 1; i < argc; i++)
-//     {
-//         if ( !strcmp(argv[i],"-o") )
-//         {
-//             if (i>=(argc-1)) 
-//                 PrintErrorAndQuit("ERROR! Missing value for -o");
-//             if (o_opt==2)
-//                 cerr<<"Warning! -rasmol is already set. Ignore -o"<<endl;
-//             else
-//             {
-//                 fname_super = argv[i + 1];
-//                 o_opt = 1;
-//             }
-//             i++;
-//         }
-//         else if ( !strcmp(argv[i],"-rasmol") )
-//         {
-//             if (i>=(argc-1)) 
-//                 PrintErrorAndQuit("ERROR! Missing value for -rasmol");
-//             if (o_opt==1)
-//                 cerr<<"Warning! -o is already set. Ignore -rasmol"<<endl;
-//             else
-//             {
-//                 fname_super = argv[i + 1];
-//                 o_opt = 2;
-//             }
-//             i++;
-//         }
-//         else if ( !strcmp(argv[i],"-u") || !strcmp(argv[i],"-L") )
-//         {
-//             if (i>=(argc-1)) 
-//                 PrintErrorAndQuit("ERROR! Missing value for -u or -L");
-//             Lnorm_ass = atof(argv[i + 1]); u_opt = true; i++;
-//             if (Lnorm_ass<=0) PrintErrorAndQuit(
-//                 "ERROR! The value for -u or -L should be >0");
-//         }
-//         else if ( !strcmp(argv[i],"-a") )
-//         {
-//             if (i>=(argc-1)) 
-//                 PrintErrorAndQuit("ERROR! Missing value for -a");
-//             if (!strcmp(argv[i + 1], "T"))      a_opt=true;
-//             else if (!strcmp(argv[i + 1], "F")) a_opt=false;
-//             else 
-//             {
-//                 a_opt=atoi(argv[i + 1]);
-//                 if (a_opt!=-2 && a_opt!=-1 && a_opt!=1)
-//                     PrintErrorAndQuit("-a must be -2, -1, 1, T or F");
-//             }
-//             i++;
-//         }
-//         else if ( !strcmp(argv[i],"-full") )
-//         {
-//             if (i>=(argc-1)) 
-//                 PrintErrorAndQuit("ERROR! Missing value for -full");
-//             if (!strcmp(argv[i + 1], "T"))      full_opt=true;
-//             else if (!strcmp(argv[i + 1], "F")) full_opt=false;
-//             else PrintErrorAndQuit("-full must be T or F");
-//             i++;
-//         }
-//         else if ( !strcmp(argv[i],"-d") )
-//         {
-//             if (i>=(argc-1)) 
-//                 PrintErrorAndQuit("ERROR! Missing value for -d");
-//             d0_scale = atof(argv[i + 1]); d_opt = true; i++;
-//         }
-//         else if ( !strcmp(argv[i],"-v") )
-//         {
-//             v_opt = true;
-//         }
-//         else if ( !strcmp(argv[i],"-h") )
-//         {
-//             h_opt = true;
-//         }
-//         else if ( !strcmp(argv[i],"-i") )
-//         {
-//             if (i>=(argc-1)) 
-//                 PrintErrorAndQuit("ERROR! Missing value for -i");
-//             if (i_opt==3)
-//                 PrintErrorAndQuit("ERROR! -i and -I cannot be used together");
-//             fname_lign = argv[i + 1];      i_opt = 1; i++;
-//         }
-//         else if (!strcmp(argv[i], "-I") )
-//         {
-//             if (i>=(argc-1)) 
-//                 PrintErrorAndQuit("ERROR! Missing value for -I");
-//             if (i_opt==1)
-//                 PrintErrorAndQuit("ERROR! -I and -i cannot be used together");
-//             fname_lign = argv[i + 1];      i_opt = 3; i++;
-//         }
-//         else if (!strcmp(argv[i], "-m") )
-//         {
-//             if (i>=(argc-1)) 
-//                 PrintErrorAndQuit("ERROR! Missing value for -m");
-//             fname_matrix = argv[i + 1];    m_opt = true; i++;
-//         }// get filename for rotation matrix
-//         else if (!strcmp(argv[i], "-fast"))
-//         {
-//             fast_opt = true;
-//         }
-//         else if (!strcmp(argv[i], "-se"))
-//         {
-//             se_opt = true;
-//         }
-//         else if ( !strcmp(argv[i],"-infmt1") )
-//         {
-//             if (i>=(argc-1)) 
-//                 PrintErrorAndQuit("ERROR! Missing value for -infmt1");
-//             infmt1_opt=atoi(argv[i + 1]); i++;
-//             if (infmt1_opt<-1 || infmt1_opt>3)
-//                 PrintErrorAndQuit("ERROR! -infmt1 can only be -1, 0, 1, 2, or 3");
-//         }
-//         else if ( !strcmp(argv[i],"-infmt2") )
-//         {
-//             if (i>=(argc-1)) 
-//                 PrintErrorAndQuit("ERROR! Missing value for -infmt2");
-//             infmt2_opt=atoi(argv[i + 1]); i++;
-//             if (infmt2_opt<-1 || infmt2_opt>3)
-//                 PrintErrorAndQuit("ERROR! -infmt2 can only be -1, 0, 1, 2, or 3");
-//         }
-//         else if ( !strcmp(argv[i],"-ter") )
-//         {
-//             if (i>=(argc-1)) 
-//                 PrintErrorAndQuit("ERROR! Missing value for -ter");
-//             ter_opt=atoi(argv[i + 1]); i++;
-//         }
-//         else if ( !strcmp(argv[i],"-split") )
-//         {
-//             if (i>=(argc-1)) 
-//                 PrintErrorAndQuit("ERROR! Missing value for -split");
-//             split_opt=atoi(argv[i + 1]); i++;
-//         }
-//         else if ( !strcmp(argv[i],"-atom") )
-//         {
-//             if (i>=(argc-1)) 
-//                 PrintErrorAndQuit("ERROR! Missing value for -atom");
-//             atom_opt=argv[i + 1]; i++;
-//             if (atom_opt.size()!=4) PrintErrorAndQuit(
-//                 "ERROR! Atom name must have 4 characters, including space.\n"
-//                 "For example, C alpha, C3' and P atoms should be specified by\n"
-//                 "-atom \" CA \", -atom \" P  \" and -atom \" C3'\", respectively.");
-//         }
-//         else if ( !strcmp(argv[i],"-mol") )
-//         {
-//             if (i>=(argc-1)) 
-//                 PrintErrorAndQuit("ERROR! Missing value for -mol");
-//             mol_opt=argv[i + 1]; i++;
-//             if (mol_opt=="prot") mol_opt="protein";
-//             else if (mol_opt=="DNA") mol_opt="RNA";
-//             if (mol_opt!="auto" && mol_opt!="protein" && mol_opt!="RNA")
-//                 PrintErrorAndQuit("ERROR! Molecule type must be one of the "
-//                     "following:\nauto, prot (the same as 'protein'), and "
-//                     "RNA (the same as 'DNA').");
-//         }
-//         else if ( !strcmp(argv[i],"-dir") )
-//         {
-//             if (i>=(argc-1)) 
-//                 PrintErrorAndQuit("ERROR! Missing value for -dir");
-//             dir_opt=argv[i + 1]; i++;
-//         }
-//         else if ( !strcmp(argv[i],"-dir1") )
-//         {
-//             if (i>=(argc-1)) 
-//                 PrintErrorAndQuit("ERROR! Missing value for -dir1");
-//             dir1_opt=argv[i + 1]; i++;
-//         }
-//         else if ( !strcmp(argv[i],"-dir2") )
-//         {
-//             if (i>=(argc-1)) 
-//                 PrintErrorAndQuit("ERROR! Missing value for -dir2");
-//             dir2_opt=argv[i + 1]; i++;
-//         }
-//         else if ( !strcmp(argv[i],"-suffix") )
-//         {
-//             if (i>=(argc-1)) 
-//                 PrintErrorAndQuit("ERROR! Missing value for -suffix");
-//             suffix_opt=argv[i + 1]; i++;
-//         }
-//         else if ( !strcmp(argv[i],"-outfmt") )
-//         {
-//             if (i>=(argc-1)) 
-//                 PrintErrorAndQuit("ERROR! Missing value for -outfmt");
-//             outfmt_opt=atoi(argv[i + 1]); i++;
-//         }
-//         else if ( !strcmp(argv[i],"-TMcut") )
-//         {
-//             if (i>=(argc-1)) 
-//                 PrintErrorAndQuit("ERROR! Missing value for -TMcut");
-//             TMcut=atof(argv[i + 1]); i++;
-//         }
-//         else if ( !strcmp(argv[i],"-byresi")  || 
-//                   !strcmp(argv[i],"-tmscore") ||
-//                   !strcmp(argv[i],"-TMscore"))
-//         {
-//             if (i>=(argc-1)) 
-//                 PrintErrorAndQuit("ERROR! Missing value for -byresi");
-//             byresi_opt=atoi(argv[i + 1]); i++;
-//         }
-//         else if ( !strcmp(argv[i],"-seq") )
-//         {
-//             byresi_opt=5;
-//         }
-//         else if ( !strcmp(argv[i],"-cp") )
-//         {
-//             mm_opt==3;
-//         }
-//         else if ( !strcmp(argv[i],"-mirror") )
-//         {
-//             if (i>=(argc-1)) 
-//                 PrintErrorAndQuit("ERROR! Missing value for -mirror");
-//             mirror_opt=atoi(argv[i + 1]); i++;
-//         }
-//         else if ( !strcmp(argv[i],"-het") )
-//         {
-//             if (i>=(argc-1)) 
-//                 PrintErrorAndQuit("ERROR! Missing value for -het");
-//             het_opt=atoi(argv[i + 1]); i++;
-//             if (het_opt!=0 && het_opt!=1 && het_opt!=2)
-//                 PrintErrorAndQuit("-het must be 0, 1, or 2");
-//         }
-//         else if ( !strcmp(argv[i],"-mm") )
-//         {
-//             if (i>=(argc-1)) 
-//                 PrintErrorAndQuit("ERROR! Missing value for -mm");
-//             mm_opt=atoi(argv[i + 1]); i++;
-//         }
-//         else if (xname.size() == 0) xname=argv[i];
-//         else if (yname.size() == 0) yname=argv[i];
-//         else PrintErrorAndQuit(string("ERROR! Undefined option ")+argv[i]);
-//     }
+    for(int i = 1; i < argc; i++)
+    {
+        if ( !strcmp(argv[i],"-o") )
+        {
+            if (i>=(argc-1)) 
+                PrintErrorAndQuit("ERROR! Missing value for -o");
+            if (o_opt==2)
+                cerr<<"Warning! -rasmol is already set. Ignore -o"<<endl;
+            else
+            {
+                fname_super = argv[i + 1];
+                o_opt = 1;
+            }
+            i++;
+        }
+        else if ( !strcmp(argv[i],"-rasmol") )
+        {
+            if (i>=(argc-1)) 
+                PrintErrorAndQuit("ERROR! Missing value for -rasmol");
+            if (o_opt==1)
+                cerr<<"Warning! -o is already set. Ignore -rasmol"<<endl;
+            else
+            {
+                fname_super = argv[i + 1];
+                o_opt = 2;
+            }
+            i++;
+        }
+        else if ( !strcmp(argv[i],"-u") || !strcmp(argv[i],"-L") )
+        {
+            if (i>=(argc-1)) 
+                PrintErrorAndQuit("ERROR! Missing value for -u or -L");
+            Lnorm_ass = atof(argv[i + 1]); u_opt = true; i++;
+            if (Lnorm_ass<=0) PrintErrorAndQuit(
+                "ERROR! The value for -u or -L should be >0");
+        }
+        else if ( !strcmp(argv[i],"-a") )
+        {
+            if (i>=(argc-1)) 
+                PrintErrorAndQuit("ERROR! Missing value for -a");
+            if (!strcmp(argv[i + 1], "T"))      a_opt=true;
+            else if (!strcmp(argv[i + 1], "F")) a_opt=false;
+            else 
+            {
+                a_opt=atoi(argv[i + 1]);
+                if (a_opt!=-2 && a_opt!=-1 && a_opt!=1)
+                    PrintErrorAndQuit("-a must be -2, -1, 1, T or F");
+            }
+            i++;
+        }
+        else if ( !strcmp(argv[i],"-full") )
+        {
+            if (i>=(argc-1)) 
+                PrintErrorAndQuit("ERROR! Missing value for -full");
+            if (!strcmp(argv[i + 1], "T"))      full_opt=true;
+            else if (!strcmp(argv[i + 1], "F")) full_opt=false;
+            else PrintErrorAndQuit("-full must be T or F");
+            i++;
+        }
+        else if ( !strcmp(argv[i],"-d") )
+        {
+            if (i>=(argc-1)) 
+                PrintErrorAndQuit("ERROR! Missing value for -d");
+            d0_scale = atof(argv[i + 1]); d_opt = true; i++;
+        }
+        else if ( !strcmp(argv[i],"-v") )
+        {
+            v_opt = true;
+        }
+        else if ( !strcmp(argv[i],"-h") )
+        {
+            h_opt = true;
+        }
+        else if ( !strcmp(argv[i],"-i") )
+        {
+            if (i>=(argc-1)) 
+                PrintErrorAndQuit("ERROR! Missing value for -i");
+            if (i_opt==3)
+                PrintErrorAndQuit("ERROR! -i and -I cannot be used together");
+            fname_lign = argv[i + 1];      i_opt = 1; i++;
+        }
+        else if (!strcmp(argv[i], "-I") )
+        {
+            if (i>=(argc-1)) 
+                PrintErrorAndQuit("ERROR! Missing value for -I");
+            if (i_opt==1)
+                PrintErrorAndQuit("ERROR! -I and -i cannot be used together");
+            fname_lign = argv[i + 1];      i_opt = 3; i++;
+        }
+        else if (!strcmp(argv[i], "-m") )
+        {
+            if (i>=(argc-1)) 
+                PrintErrorAndQuit("ERROR! Missing value for -m");
+            fname_matrix = argv[i + 1];    m_opt = true; i++;
+        }// get filename for rotation matrix
+        else if (!strcmp(argv[i], "-fast"))
+        {
+            fast_opt = true;
+        }
+        else if (!strcmp(argv[i], "-se"))
+        {
+            se_opt = true;
+        }
+        else if ( !strcmp(argv[i],"-infmt1") )
+        {
+            if (i>=(argc-1)) 
+                PrintErrorAndQuit("ERROR! Missing value for -infmt1");
+            infmt1_opt=atoi(argv[i + 1]); i++;
+            if (infmt1_opt<-1 || infmt1_opt>3)
+                PrintErrorAndQuit("ERROR! -infmt1 can only be -1, 0, 1, 2, or 3");
+        }
+        else if ( !strcmp(argv[i],"-infmt2") )
+        {
+            if (i>=(argc-1)) 
+                PrintErrorAndQuit("ERROR! Missing value for -infmt2");
+            infmt2_opt=atoi(argv[i + 1]); i++;
+            if (infmt2_opt<-1 || infmt2_opt>3)
+                PrintErrorAndQuit("ERROR! -infmt2 can only be -1, 0, 1, 2, or 3");
+        }
+        else if ( !strcmp(argv[i],"-ter") )
+        {
+            if (i>=(argc-1)) 
+                PrintErrorAndQuit("ERROR! Missing value for -ter");
+            ter_opt=atoi(argv[i + 1]); i++;
+        }
+        else if ( !strcmp(argv[i],"-split") )
+        {
+            if (i>=(argc-1)) 
+                PrintErrorAndQuit("ERROR! Missing value for -split");
+            split_opt=atoi(argv[i + 1]); i++;
+        }
+        else if ( !strcmp(argv[i],"-atom") )
+        {
+            if (i>=(argc-1)) 
+                PrintErrorAndQuit("ERROR! Missing value for -atom");
+            atom_opt=argv[i + 1]; i++;
+            if (atom_opt.size()!=4) PrintErrorAndQuit(
+                "ERROR! Atom name must have 4 characters, including space.\n"
+                "For example, C alpha, C3' and P atoms should be specified by\n"
+                "-atom \" CA \", -atom \" P  \" and -atom \" C3'\", respectively.");
+        }
+        else if ( !strcmp(argv[i],"-mol") )
+        {
+            if (i>=(argc-1)) 
+                PrintErrorAndQuit("ERROR! Missing value for -mol");
+            mol_opt=argv[i + 1]; i++;
+            if (mol_opt=="prot") mol_opt="protein";
+            else if (mol_opt=="DNA") mol_opt="RNA";
+            if (mol_opt!="auto" && mol_opt!="protein" && mol_opt!="RNA")
+                PrintErrorAndQuit("ERROR! Molecule type must be one of the "
+                    "following:\nauto, prot (the same as 'protein'), and "
+                    "RNA (the same as 'DNA').");
+        }
+        else if ( !strcmp(argv[i],"-dir") )
+        {
+            if (i>=(argc-1)) 
+                PrintErrorAndQuit("ERROR! Missing value for -dir");
+            dir_opt=argv[i + 1]; i++;
+        }
+        else if ( !strcmp(argv[i],"-dir1") )
+        {
+            if (i>=(argc-1)) 
+                PrintErrorAndQuit("ERROR! Missing value for -dir1");
+            dir1_opt=argv[i + 1]; i++;
+        }
+        else if ( !strcmp(argv[i],"-dir2") )
+        {
+            if (i>=(argc-1)) 
+                PrintErrorAndQuit("ERROR! Missing value for -dir2");
+            dir2_opt=argv[i + 1]; i++;
+        }
+        else if ( !strcmp(argv[i],"-suffix") )
+        {
+            if (i>=(argc-1)) 
+                PrintErrorAndQuit("ERROR! Missing value for -suffix");
+            suffix_opt=argv[i + 1]; i++;
+        }
+        else if ( !strcmp(argv[i],"-outfmt") )
+        {
+            if (i>=(argc-1)) 
+                PrintErrorAndQuit("ERROR! Missing value for -outfmt");
+            outfmt_opt=atoi(argv[i + 1]); i++;
+        }
+        else if ( !strcmp(argv[i],"-TMcut") )
+        {
+            if (i>=(argc-1)) 
+                PrintErrorAndQuit("ERROR! Missing value for -TMcut");
+            TMcut=atof(argv[i + 1]); i++;
+        }
+        else if ( !strcmp(argv[i],"-byresi")  || 
+                  !strcmp(argv[i],"-tmscore") ||
+                  !strcmp(argv[i],"-TMscore"))
+        {
+            if (i>=(argc-1)) 
+                PrintErrorAndQuit("ERROR! Missing value for -byresi");
+            byresi_opt=atoi(argv[i + 1]); i++;
+        }
+        else if ( !strcmp(argv[i],"-seq") )
+        {
+            byresi_opt=5;
+        }
+        else if ( !strcmp(argv[i],"-cp") )
+        {
+            mm_opt==3;
+        }
+        else if ( !strcmp(argv[i],"-mirror") )
+        {
+            if (i>=(argc-1)) 
+                PrintErrorAndQuit("ERROR! Missing value for -mirror");
+            mirror_opt=atoi(argv[i + 1]); i++;
+        }
+        else if ( !strcmp(argv[i],"-het") )
+        {
+            if (i>=(argc-1)) 
+                PrintErrorAndQuit("ERROR! Missing value for -het");
+            het_opt=atoi(argv[i + 1]); i++;
+            if (het_opt!=0 && het_opt!=1 && het_opt!=2)
+                PrintErrorAndQuit("-het must be 0, 1, or 2");
+        }
+        else if ( !strcmp(argv[i],"-mm") )
+        {
+            if (i>=(argc-1)) 
+                PrintErrorAndQuit("ERROR! Missing value for -mm");
+            mm_opt=atoi(argv[i + 1]); i++;
+        }
+        else if (xname.size() == 0) xname=argv[i];
+        else if (yname.size() == 0) yname=argv[i];
+        else PrintErrorAndQuit(string("ERROR! Undefined option ")+argv[i]);
+    }
 
-//     if(xname.size()==0 || (yname.size()==0 && dir_opt.size()==0) || 
-//                           (yname.size()    && dir_opt.size()))
-//     {
-//         if (h_opt) print_help(h_opt);
-//         if (v_opt)
-//         {
-//             print_version();
-//             exit(EXIT_FAILURE);
-//         }
-//         if (xname.size()==0)
-//             PrintErrorAndQuit("Please provide input structures");
-//         else if (yname.size()==0 && dir_opt.size()==0 && mm_opt!=4)
-//             PrintErrorAndQuit("Please provide structure B");
-//         else if (yname.size() && dir_opt.size())
-//             PrintErrorAndQuit("Please provide only one file name if -dir is set");
-//     }
+    if(xname.size()==0 || (yname.size()==0 && dir_opt.size()==0) || 
+                          (yname.size()    && dir_opt.size()))
+    {
+        if (h_opt) print_help(h_opt);
+        if (v_opt)
+        {
+            print_version();
+            exit(EXIT_FAILURE);
+        }
+        if (xname.size()==0)
+            PrintErrorAndQuit("Please provide input structures");
+        else if (yname.size()==0 && dir_opt.size()==0 && mm_opt!=4)
+            PrintErrorAndQuit("Please provide structure B");
+        else if (yname.size() && dir_opt.size())
+            PrintErrorAndQuit("Please provide only one file name if -dir is set");
+    }
 
-//     if (suffix_opt.size() && dir_opt.size()+dir1_opt.size()+dir2_opt.size()==0)
-//         PrintErrorAndQuit("-suffix is only valid if -dir, -dir1 or -dir2 is set");
-//     if ((dir_opt.size() || dir1_opt.size() || dir2_opt.size()))
-//     {
-//         if (mm_opt!=2 && mm_opt!=4 && (m_opt || o_opt))
-//             PrintErrorAndQuit("-m or -o cannot be set with -dir, -dir1 or -dir2");
-//         else if (dir_opt.size() && (dir1_opt.size() || dir2_opt.size()))
-//             PrintErrorAndQuit("-dir cannot be set with -dir1 or -dir2");
-//     }
-//     if (o_opt && (infmt1_opt!=-1 && infmt1_opt!=0 && infmt1_opt!=3))
-//         PrintErrorAndQuit("-o can only be used with -infmt1 -1, 0 or 3");
+    if (suffix_opt.size() && dir_opt.size()+dir1_opt.size()+dir2_opt.size()==0)
+        PrintErrorAndQuit("-suffix is only valid if -dir, -dir1 or -dir2 is set");
+    if ((dir_opt.size() || dir1_opt.size() || dir2_opt.size()))
+    {
+        if (mm_opt!=2 && mm_opt!=4 && (m_opt || o_opt))
+            PrintErrorAndQuit("-m or -o cannot be set with -dir, -dir1 or -dir2");
+        else if (dir_opt.size() && (dir1_opt.size() || dir2_opt.size()))
+            PrintErrorAndQuit("-dir cannot be set with -dir1 or -dir2");
+    }
+    if (o_opt && (infmt1_opt!=-1 && infmt1_opt!=0 && infmt1_opt!=3))
+        PrintErrorAndQuit("-o can only be used with -infmt1 -1, 0 or 3");
 
-//     if (mol_opt=="protein" && atom_opt=="auto")
-//         atom_opt=" CA ";
-//     else if (mol_opt=="RNA" && atom_opt=="auto")
-//         atom_opt=" C3'";
+    if (mol_opt=="protein" && atom_opt=="auto")
+        atom_opt=" CA ";
+    else if (mol_opt=="RNA" && atom_opt=="auto")
+        atom_opt=" C3'";
 
-//     if (d_opt && d0_scale<=0)
-//         PrintErrorAndQuit("Wrong value for option -d! It should be >0");
-//     if (outfmt_opt>=2 && (a_opt || u_opt || d_opt))
-//         PrintErrorAndQuit("-outfmt 2 cannot be used with -a, -u, -L, -d");
-//     if (byresi_opt!=0)
-//     {
-//         if (i_opt)
-//             PrintErrorAndQuit("-byresi >=1 cannot be used with -i or -I");
-//         if (byresi_opt<0 || byresi_opt>5)
-//             PrintErrorAndQuit("-byresi can only be 0, 1, 2, 4, or 5");
-//         if (byresi_opt>=2 && byresi_opt<=3 && ter_opt>=2)
-//             PrintErrorAndQuit("-byresi 2 must be used with -ter <=1");
-//     }
-//     //if (split_opt==1 && ter_opt!=0)
-//         //PrintErrorAndQuit("-split 1 should be used with -ter 0");
-//     //else if (split_opt==2 && ter_opt!=0 && ter_opt!=1)
-//         //PrintErrorAndQuit("-split 2 should be used with -ter 0 or 1");
-//     if (split_opt<0 || split_opt>2)
-//         PrintErrorAndQuit("-split can only be 0, 1 or 2");
+    if (d_opt && d0_scale<=0)
+        PrintErrorAndQuit("Wrong value for option -d! It should be >0");
+    if (outfmt_opt>=2 && (a_opt || u_opt || d_opt))
+        PrintErrorAndQuit("-outfmt 2 cannot be used with -a, -u, -L, -d");
+    if (byresi_opt!=0)
+    {
+        if (i_opt)
+            PrintErrorAndQuit("-byresi >=1 cannot be used with -i or -I");
+        if (byresi_opt<0 || byresi_opt>5)
+            PrintErrorAndQuit("-byresi can only be 0, 1, 2, 4, or 5");
+        if (byresi_opt>=2 && byresi_opt<=3 && ter_opt>=2)
+            PrintErrorAndQuit("-byresi 2 must be used with -ter <=1");
+    }
+    //if (split_opt==1 && ter_opt!=0)
+        //PrintErrorAndQuit("-split 1 should be used with -ter 0");
+    //else if (split_opt==2 && ter_opt!=0 && ter_opt!=1)
+        //PrintErrorAndQuit("-split 2 should be used with -ter 0 or 1");
+    if (split_opt<0 || split_opt>2)
+        PrintErrorAndQuit("-split can only be 0, 1 or 2");
 
-//     if (mm_opt==3)
-//     {
-//         cp_opt=true;
-//         mm_opt=0;
-//     }
-//     if (cp_opt && i_opt)
-//         PrintErrorAndQuit("-mm 3 cannot be used with -i or -I");
+    if (mm_opt==3)
+    {
+        cp_opt=true;
+        mm_opt=0;
+    }
+    if (cp_opt && i_opt)
+        PrintErrorAndQuit("-mm 3 cannot be used with -i or -I");
 
-//     if (mirror_opt && het_opt!=1)
-//         cerr<<"WARNING! -mirror was not used with -het 1. "
-//             <<"D amino acids may not be correctly aligned."<<endl;
+    if (mirror_opt && het_opt!=1)
+        cerr<<"WARNING! -mirror was not used with -het 1. "
+            <<"D amino acids may not be correctly aligned."<<endl;
 
-//     if (mm_opt)
-//     {
-//         if (i_opt) PrintErrorAndQuit("-mm cannot be used with -i or -I");
-//         if (u_opt) PrintErrorAndQuit("-mm cannot be used with -u or -L");
-//         //if (cp_opt) PrintErrorAndQuit("-mm cannot be used with -cp");
-//         if (dir_opt.size() && mm_opt!=4) PrintErrorAndQuit("-mm 1 to 3 cannot be used with -dir");
-//         if (byresi_opt) PrintErrorAndQuit("-mm cannot be used with -byresi");
-//         if (ter_opt>=2 && mm_opt!=4) PrintErrorAndQuit("-mm must be used with -ter 0 or -ter 1");
-//         if (mm_opt==4 && (yname.size() || dir2_opt.size()))
-//             cerr<<"WARNING! structure_2 is ignored for -mm 4"<<endl;
-//     }
-//     else if (full_opt) PrintErrorAndQuit("-full can only be used with -mm");
+    if (mm_opt)
+    {
+        if (i_opt) PrintErrorAndQuit("-mm cannot be used with -i or -I");
+        if (u_opt) PrintErrorAndQuit("-mm cannot be used with -u or -L");
+        //if (cp_opt) PrintErrorAndQuit("-mm cannot be used with -cp");
+        if (dir_opt.size() && mm_opt!=4) PrintErrorAndQuit("-mm 1 to 3 cannot be used with -dir");
+        if (byresi_opt) PrintErrorAndQuit("-mm cannot be used with -byresi");
+        if (ter_opt>=2 && mm_opt!=4) PrintErrorAndQuit("-mm must be used with -ter 0 or -ter 1");
+        if (mm_opt==4 && (yname.size() || dir2_opt.size()))
+            cerr<<"WARNING! structure_2 is ignored for -mm 4"<<endl;
+    }
+    else if (full_opt) PrintErrorAndQuit("-full can only be used with -mm");
 
-//     if (o_opt && ter_opt<=1 && split_opt==2)
-//     {
-//         if (mm_opt && o_opt==2) cerr<<"WARNING! -mm may generate incorrect" 
-//             <<" RasMol output due to limitations in PDB file format. "
-//             <<"When -mm is used, -o is recommended over -rasmol"<<endl;
-//         else if (mm_opt==0) cerr<<"WARNING! Only the superposition of the"
-//             <<"last aligned chain pair will be generated"<<endl;
-//     }
+    if (o_opt && ter_opt<=1 && split_opt==2)
+    {
+        if (mm_opt && o_opt==2) cerr<<"WARNING! -mm may generate incorrect" 
+            <<" RasMol output due to limitations in PDB file format. "
+            <<"When -mm is used, -o is recommended over -rasmol"<<endl;
+        else if (mm_opt==0) cerr<<"WARNING! Only the superposition of the"
+            <<"last aligned chain pair will be generated"<<endl;
+    }
 
-//     /* read initial alignment file from 'align.txt' */
-//     if (i_opt) read_user_alignment(sequence, fname_lign, i_opt);
+    /* read initial alignment file from 'align.txt' */
+    if (i_opt) read_user_alignment(sequence, fname_lign, i_opt);
 
-//     if (byresi_opt) i_opt=3;
+    if (byresi_opt) i_opt=3;
 
-//     if (m_opt && fname_matrix == "") // Output rotation matrix: matrix.txt
-//         PrintErrorAndQuit("ERROR! Please provide a file name for option -m!");
+    if (m_opt && fname_matrix == "") // Output rotation matrix: matrix.txt
+        PrintErrorAndQuit("ERROR! Please provide a file name for option -m!");
 
-//     /* parse file list */
-//     if (dir1_opt.size()+dir_opt.size()==0) chain1_list.push_back(xname);
-//     else file2chainlist(chain1_list, xname, dir_opt+dir1_opt, suffix_opt);
+    /* parse file list */
+    if (dir1_opt.size()+dir_opt.size()==0) chain1_list.push_back(xname);
+    else file2chainlist(chain1_list, xname, dir_opt+dir1_opt, suffix_opt);
 
-//     int i; 
-//     if (dir_opt.size())
-//         for (i=0;i<chain1_list.size();i++)
-//             chain2_list.push_back(chain1_list[i]);
-//     else if (dir2_opt.size()==0) chain2_list.push_back(yname);
-//     else file2chainlist(chain2_list, yname, dir2_opt, suffix_opt);
+    int i; 
+    if (dir_opt.size())
+        for (i=0;i<chain1_list.size();i++)
+            chain2_list.push_back(chain1_list[i]);
+    else if (dir2_opt.size()==0) chain2_list.push_back(yname);
+    else file2chainlist(chain2_list, yname, dir2_opt, suffix_opt);
 
-//     if (outfmt_opt==2)
-//     {
-//         if (mm_opt==2) cout<<"#Query\tTemplate\tTM"<<endl;
-//         else cout<<"#PDBchain1\tPDBchain2\tTM1\tTM2\t"
-//             <<"RMSD\tID1\tID2\tIDali\tL1\tL2\tLali"<<endl;
-//     }
+    if (outfmt_opt==2)
+    {
+        if (mm_opt==2) cout<<"#Query\tTemplate\tTM"<<endl;
+        else cout<<"#PDBchain1\tPDBchain2\tTM1\tTM2\t"
+            <<"RMSD\tID1\tID2\tIDali\tL1\tL2\tLali"<<endl;
+    }
 
-//     /* real alignment. entry functions are MMalign_main and 
-//      * TMalign_main */
-//     if (mm_opt==0) TMalign(xname, yname, fname_super, fname_lign, fname_matrix,
-//         sequence, Lnorm_ass, d0_scale, m_opt, i_opt, o_opt, a_opt,
-//         u_opt, d_opt, TMcut, infmt1_opt, infmt2_opt, ter_opt,
-//         split_opt, outfmt_opt, fast_opt, cp_opt, mirror_opt, het_opt,
-//         atom_opt, mol_opt, dir_opt, dir1_opt, dir2_opt, byresi_opt,
-//         chain1_list, chain2_list, se_opt);
-//     else if (mm_opt==1) MMalign(xname, yname, fname_super, fname_lign,
-//         fname_matrix, sequence, d0_scale, m_opt, o_opt,
-//         a_opt, d_opt, full_opt, TMcut, infmt1_opt, infmt2_opt,
-//         ter_opt, split_opt, outfmt_opt, fast_opt, mirror_opt, het_opt,
-//         atom_opt, mol_opt, dir1_opt, dir2_opt, chain1_list, chain2_list);
-//     else if (mm_opt==2) MMdock(xname, yname, fname_super, 
-//         fname_matrix, sequence, Lnorm_ass, d0_scale, m_opt, o_opt, a_opt,
-//         u_opt, d_opt, TMcut, infmt1_opt, infmt2_opt, ter_opt,
-//         split_opt, outfmt_opt, fast_opt, mirror_opt, het_opt,
-//         atom_opt, mol_opt, dir1_opt, dir2_opt, chain1_list, chain2_list);
-//     else if (mm_opt==3) ; // should be changed to mm_opt=0, cp_opt=true
-//     else if (mm_opt==4) mTMalign(xname, yname, fname_super, fname_matrix,
-//         sequence, Lnorm_ass, d0_scale, m_opt, i_opt, o_opt, a_opt,
-//         u_opt, d_opt, TMcut, infmt1_opt, ter_opt,
-//         split_opt, outfmt_opt, fast_opt, het_opt,
-//         atom_opt, mol_opt, dir_opt, byresi_opt, chain1_list);
-//     else cerr<<"WARNING! -mm "<<mm_opt<<" not implemented"<<endl;
+    /* real alignment. entry functions are MMalign_main and 
+     * TMalign_main */
+    if (mm_opt==0) TMalign(xname, yname, fname_super, fname_lign, fname_matrix,
+        sequence, Lnorm_ass, d0_scale, m_opt, i_opt, o_opt, a_opt,
+        u_opt, d_opt, TMcut, infmt1_opt, infmt2_opt, ter_opt,
+        split_opt, outfmt_opt, fast_opt, cp_opt, mirror_opt, het_opt,
+        atom_opt, mol_opt, dir_opt, dir1_opt, dir2_opt, byresi_opt,
+        chain1_list, chain2_list, se_opt);
+    else if (mm_opt==1) MMalign(xname, yname, fname_super, fname_lign,
+        fname_matrix, sequence, d0_scale, m_opt, o_opt,
+        a_opt, d_opt, full_opt, TMcut, infmt1_opt, infmt2_opt,
+        ter_opt, split_opt, outfmt_opt, fast_opt, mirror_opt, het_opt,
+        atom_opt, mol_opt, dir1_opt, dir2_opt, chain1_list, chain2_list);
+    else if (mm_opt==2) MMdock(xname, yname, fname_super, 
+        fname_matrix, sequence, Lnorm_ass, d0_scale, m_opt, o_opt, a_opt,
+        u_opt, d_opt, TMcut, infmt1_opt, infmt2_opt, ter_opt,
+        split_opt, outfmt_opt, fast_opt, mirror_opt, het_opt,
+        atom_opt, mol_opt, dir1_opt, dir2_opt, chain1_list, chain2_list);
+    else if (mm_opt==3) ; // should be changed to mm_opt=0, cp_opt=true
+    else if (mm_opt==4) mTMalign(xname, yname, fname_super, fname_matrix,
+        sequence, Lnorm_ass, d0_scale, m_opt, i_opt, o_opt, a_opt,
+        u_opt, d_opt, TMcut, infmt1_opt, ter_opt,
+        split_opt, outfmt_opt, fast_opt, het_opt,
+        atom_opt, mol_opt, dir_opt, byresi_opt, chain1_list);
+    else cerr<<"WARNING! -mm "<<mm_opt<<" not implemented"<<endl;
 
-//     /* clean up */
-//     vector<string>().swap(chain1_list);
-//     vector<string>().swap(chain2_list);
-//     vector<string>().swap(sequence);
+    /* clean up */
+    vector<string>().swap(chain1_list);
+    vector<string>().swap(chain2_list);
+    vector<string>().swap(sequence);
 
-//     t2 = clock();
-//     float diff = ((float)t2 - (float)t1)/CLOCKS_PER_SEC;
-//     if (outfmt_opt<2) printf("#Total CPU time is %5.2f seconds\n", diff);
-//     return 0;
-// }
+    t2 = clock();
+    float diff = ((float)t2 - (float)t1)/CLOCKS_PER_SEC;
+    if (outfmt_opt<2) printf("#Total CPU time is %5.2f seconds\n", diff);
+    return 0;
+}
