@@ -160,8 +160,8 @@ size_t get_PDB_lines(const string filename,
     bool select_atom=false;
     size_t model_idx=0;
     vector<string> tmp_str_vec;
-    istringstream iss(filename);
-    bool is_pdb_str = false;
+    istringstream iss;
+    bool is_raw_string = false;
     
     int compress_type=0; // uncompressed file
     ifstream fin;
@@ -181,20 +181,28 @@ size_t get_PDB_lines(const string filename,
         fin_gz.open("bzcat '"+filename+"'");
         compress_type=2;
     }
-    else if (filename.size() >= 1000) {
-        // then it is most likely a pdb string
-        is_pdb_str = true;
-    }
     else
 #endif
-    {
+    if (filename.find('\n') != string::npos) {
+        // If there is a newline in the "filename", assume it is actually pdb data
+        is_raw_string = true;
+        iss = istringstream(filename);
+    } else {
         if (filename=="-") compress_type=-1;
         else fin.open(filename.c_str());
     }
 
     if (infmt_opt==0||infmt_opt==-1) // PDB format
     {
-        while ((compress_type==-1)?cin.good():(compress_type?fin_gz.good():fin.good()) || (!iss.eof()))
+        // 4 cases: stdin, compressed, file stream, string stream
+        while (
+            compress_type == -1 ? cin.good()         // stdin
+                : (compress_type > 0 ? fin_gz.good() // compressed file stream
+                    : (is_raw_string ? !iss.eof()    // stream stream
+                        : fin.good()                 // uncompressed file stream
+                    )
+                )
+        )
         {
             if  (compress_type==-1) getline(cin, line);
             else if(is_pdb_str) getline(iss, line);
