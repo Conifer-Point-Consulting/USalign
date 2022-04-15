@@ -1,4 +1,4 @@
-#include "../USalignLib.cpp"
+#include "../USalignLib.h"
 #include "test_data.cpp"
 
 /*
