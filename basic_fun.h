@@ -2,25 +2,12 @@
 #ifndef TMalign_basic_fun_h
 #define TMalign_basic_fun_h 1
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
-#include <time.h>
-#include <string.h>
-//#include <malloc.h>
-
-#include <sstream>
-#include <iostream>
-#include <iomanip>
-#include <fstream>
-#include <vector>
-#include <iterator>
-#include <algorithm>
-#include <string>
-#include <iomanip>
-#include <map>
-
-#include "pstream.h" // For reading gzip and bz2 compressed files
+#ifndef USALIGN_SKIP_BASIC_FUN_HEADERS
+// These the headers shouldn't be declared inside a namespace.
+// So if USalign will be imported into a namespace, set USALIGN_SKIP_BASIC_FUN_HEADERS
+// and #include the headers into the caller.
+#include "basic_fun_headers.h"
+#endif
 
 using namespace std;
 
