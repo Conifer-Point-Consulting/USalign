@@ -1,7 +1,7 @@
 CC=g++
-CFLAGS=-O3 -ffast-math
+CFLAGS=-O3 -ffast-math -std=c++11
 LDFLAGS=#-static# -lm
-PROGRAM=qTMclust USalign TMalign TMscore MMalign se pdb2xyz xyz_sfetch pdb2fasta pdb2ss NWalign HwRMSD cif2pdb
+PROGRAM=qTMclust USalign TMalign TMscore MMalign se pdb2xyz xyz_sfetch pdb2fasta pdb2ss NWalign HwRMSD cif2pdb USalignLibTests
 
 all: ${PROGRAM}
 
@@ -43,6 +43,9 @@ HwRMSD: HwRMSD.cpp HwRMSD.h NWalign.h BLOSUM.h se.h param_set.h basic_fun.h Kabs
 
 cif2pdb: cif2pdb.cpp pstream.h
 	${CC} ${CFLAGS} $@.cpp -o $@ ${LDFLAGS}
+
+USalignLibTests:
+	${CC} ${CFLAGS} test/USalignLibTests.cpp -o $@ ${LDFLAGS}
 
 clean:
 	rm -f ${PROGRAM}
