@@ -2002,7 +2002,7 @@ int mTMalign(string &xname, string &yname, const string &fname_super,
     return 1;
 }
 
-int main(int argc, char *argv[])
+int main_original(int argc, char *argv[])
 {
     if (argc < 2) print_help();
 
