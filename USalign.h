@@ -6,6 +6,11 @@
 
 using namespace std;
 
+struct TMatrix {
+    double transform[3];
+    double rotation_matrix[3][3];
+};
+
 int TMalign(string &xname, string &yname, const string &fname_super,
     const string &fname_lign, const string &fname_matrix,
     vector<string> &sequence, const double Lnorm_ass, const double d0_scale,
@@ -17,7 +22,9 @@ int TMalign(string &xname, string &yname, const string &fname_super,
     const string &atom_opt, const string &mol_opt, const string &dir_opt,
     const string &dir1_opt, const string &dir2_opt, const int byresi_opt,
     const vector<string> &chain1_list, const vector<string> &chain2_list,
-    const bool se_opt);
+    const bool se_opt,
+    TMatrix *tmatrix=nullptr
+);
 
 int MMalign(const string &xname, const string &yname,
     const string &fname_super, const string &fname_lign,

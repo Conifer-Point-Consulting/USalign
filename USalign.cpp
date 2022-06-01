@@ -1,6 +1,7 @@
 /* command line argument parsing and document of US-align main program */
 
 #include "MMalign.h"
+#include "USalign.h"
 
 using namespace std;
 
@@ -209,7 +210,9 @@ int TMalign(string &xname, string &yname, const string &fname_super,
     const string &atom_opt, const string &mol_opt, const string &dir_opt,
     const string &dir1_opt, const string &dir2_opt, const int byresi_opt,
     const vector<string> &chain1_list, const vector<string> &chain2_list,
-    const bool se_opt)
+    const bool se_opt,
+    TMatrix *tmatrix
+)
 {
     /* declare previously global variables */
     vector<vector<string> >PDB_lines1; // text of chain1
@@ -402,6 +405,21 @@ int TMalign(string &xname, string &yname, const string &fname_super,
                         outfmt_opt, ter_opt, false, split_opt, o_opt,
                         fname_super, i_opt, a_opt, u_opt, d_opt, mirror_opt,
                         resi_vec1, resi_vec2);
+
+                    if (tmatrix) {
+                        tmatrix->transform[0] = t0[0];
+                        tmatrix->transform[1] = t0[1];
+                        tmatrix->transform[2] = t0[2];
+                        tmatrix->rotation_matrix[0][0] = u0[0][0];
+                        tmatrix->rotation_matrix[0][1] = u0[0][1];
+                        tmatrix->rotation_matrix[0][2] = u0[0][2];
+                        tmatrix->rotation_matrix[1][0] = u0[1][0];
+                        tmatrix->rotation_matrix[1][1] = u0[1][1];
+                        tmatrix->rotation_matrix[1][2] = u0[1][2];
+                        tmatrix->rotation_matrix[2][0] = u0[2][0];
+                        tmatrix->rotation_matrix[2][1] = u0[2][1];
+                        tmatrix->rotation_matrix[2][2] = u0[2][2];
+                    }
 
                     /* Done! Free memory */
                     seqM.clear();
