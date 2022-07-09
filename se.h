@@ -58,7 +58,9 @@ int se_main(
             d0u, d0_search, mol_type); // set d0u
         if (u_opt==2)
         {
-            parameter_set4search(Lnorm_ass, Lnorm_ass, D0_MIN, Lnorm,
+	    //--- Does this want to be xlen, ylen?
+	    parameter_set4search(xlen, ylen, D0_MIN, Lnorm,
+	    //parameter_set4search(int(Lnorm_ass), int(Lnorm_ass), D0_MIN, Lnorm,
                 score_d8, d0, d0_search, dcu0); // set score_d8
         }
     }
