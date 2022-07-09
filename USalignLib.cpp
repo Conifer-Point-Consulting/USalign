@@ -15,7 +15,7 @@ int doAlignment(string pdb1, string pdb2, TMatrix &tmatrix) {
     string fname_lign  = ""; // file name for user alignment
     string fname_matrix= ""; // file name for output matrix
     vector<string> sequence; // get value from alignment file
-    double Lnorm_ass, d0_scale;
+    double Lnorm_ass = 0, d0_scale = 0;
 
     bool h_opt = false; // print full help message
     bool v_opt = false; // print version
