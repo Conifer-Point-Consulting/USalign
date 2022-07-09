@@ -2124,7 +2124,7 @@ int TMalign_dimer_main(double **xa, double **ya,
 
         //--------------- 2. Align proteins from original alignment
         double prevD0_MIN = D0_MIN;// stored for later use
-        int prevLnorm = Lnorm;
+        double prevLnorm = Lnorm;
         double prevd0 = d0;
         TM_ali = standard_TMscore(r1, r2, xtm, ytm, xt, xa, ya, xlen, ylen,
             invmap, L_ali, rmsd_ali, D0_MIN, Lnorm, d0, d0_search, score_d8,
@@ -2376,7 +2376,7 @@ int TMalign_dimer_main(double **xa, double **ya,
 
             //--------------- 2. Align proteins from original alignment
             double prevD0_MIN = D0_MIN;// stored for later use
-            int prevLnorm = Lnorm;
+            double prevLnorm = Lnorm;
             double prevd0 = d0;
             TM_ali = standard_TMscore(r1, r2, xtm, ytm, xt, xa, ya,
                 xlen, ylen, invmap, L_ali, rmsd_ali, D0_MIN, Lnorm, d0,
@@ -2902,7 +2902,7 @@ int trimComplex(vector<vector<vector<double> > >&a_trim_vec,
     vector<double> ycoor(3,0);
     int xlen,ylen;
     int Lchain_max;
-    double expand=2;
+    int expand=2;
     for (i=0;i<chain_num;i++)
     {
         xlen=len_vec[i];
