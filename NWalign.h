@@ -532,7 +532,7 @@ int extract_aln_from_resi(vector<string> &sequence, char *seqx, char *seqy,
     int ylen=resi_vec2.size();
     if (byresi_opt==4 || byresi_opt==5) // global or glocal sequence alignment
     {
-        int *invmap;
+        int *invmap = NULL;
         int glocal=0;
         if (byresi_opt==5) glocal=2;
         int mol_type=0;
