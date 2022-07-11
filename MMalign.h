@@ -2892,8 +2892,8 @@ int trimComplex(vector<vector<vector<double> > >&a_trim_vec,
     int chain_num=a_vec.size();
     int i,j;
     int r1,r2;
-    double dinter;
-    double dinter_min;
+    double dinter = 0;
+    double dinter_min = 0;
     vector<pair<double,int> >dinter_vec;
     vector<bool> include_vec;
     vector<char> seq_empty;

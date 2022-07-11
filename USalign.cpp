@@ -225,9 +225,9 @@ int TMalign(string &xname, string &yname, const string &fname_super,
     int    chain_i,chain_j;    // chain index
     int    r;                  // residue index
     int    xlen, ylen;         // chain length
-    int    xchainnum,ychainnum;// number of chains in a PDB file
-    char   *seqx, *seqy;       // for the protein sequence 
-    char   *secx, *secy;       // for the secondary structure 
+    int    xchainnum = 0, ychainnum = 0;// number of chains in a PDB file
+    char   *seqx = NULL, *seqy = NULL;       // for the protein sequence 
+    char   *secx = NULL, *secy = NULL;       // for the secondary structure 
     double **xa, **ya;         // for input vectors xa[0...xlen-1][0..2] and
                                // ya[0...ylen-1][0..2], in general,
                                // ya is regarded as native structure 
@@ -323,14 +323,14 @@ int TMalign(string &xname, string &yname, const string &fname_super,
                     double t0[3], u0[3][3];
                     double TM1, TM2;
                     double TM3, TM4, TM5;     // for a_opt, u_opt, d_opt
-                    double d0_0, TM_0;
+                    double d0_0 = 0, TM_0 = 0;
                     double d0A, d0B, d0u, d0a;
                     double d0_out=5.0;
                     string seqM, seqxA, seqyA;// for output alignment
                     double rmsd0 = 0.0;
                     int L_ali;                // Aligned length in standard_TMscore
                     double Liden=0;
-                    double TM_ali, rmsd_ali;  // TMscore and rmsd in standard_TMscore
+                    double TM_ali = 0, rmsd_ali = 0;  // TMscore and rmsd in standard_TMscore
                     int n_ali=0;
                     int n_ali8=0;
                     bool force_fast_opt=(getmin(xlen,ylen)>1500)?true:fast_opt;
@@ -493,8 +493,8 @@ int MMalign(const string &xname, const string &yname,
     int    i,j;                    // chain index
     int    xlen, ylen;             // chain length
     double **xa, **ya;             // structure of single chain
-    char   *seqx, *seqy;           // for the protein sequence 
-    char   *secx, *secy;           // for the secondary structure 
+    char   *seqx = NULL, *seqy = NULL; // for the protein sequence 
+    char   *secx = NULL, *secy = NULL;    // for the secondary structure 
     int    xlen_aa,ylen_aa;        // total length of protein
     int    xlen_na,ylen_na;        // total length of RNA/DNA
     vector<string> resi_vec1;  // residue index for chain1
@@ -535,14 +535,14 @@ int MMalign(const string &xname, const string &yname,
         double t0[3], u0[3][3];
         double TM1, TM2;
         double TM3, TM4, TM5;     // for a_opt, u_opt, d_opt
-        double d0_0, TM_0;
+        double d0_0 = 0, TM_0 = 0;
         double d0A, d0B, d0u, d0a;
         double d0_out=5.0;
         string seqM, seqxA, seqyA;// for output alignment
         double rmsd0 = 0.0;
         int L_ali;                // Aligned length in standard_TMscore
         double Liden=0;
-        double TM_ali, rmsd_ali;  // TMscore and rmsd in standard_TMscore
+        double TM_ali = 0, rmsd_ali = 0;  // TMscore and rmsd in standard_TMscore
         int n_ali=0;
         int n_ali8=0;
 
@@ -608,7 +608,7 @@ int MMalign(const string &xname, const string &yname,
     vector<vector<string> >seqyA_mat(chain1_num,tmp_str_vec);
 
     double maxTMmono=-1;
-    int maxTMmono_i,maxTMmono_j;
+    int maxTMmono_i = 0,maxTMmono_j = 0;
 
     /* get all-against-all alignment */
     if (len_aa+len_na>500) fast_opt=true;
@@ -657,14 +657,14 @@ int MMalign(const string &xname, const string &yname,
             double t0[3], u0[3][3];
             double TM1, TM2;
             double TM3, TM4, TM5;     // for a_opt, u_opt, d_opt
-            double d0_0, TM_0;
+            double d0_0 = 0, TM_0 = 0;
             double d0A, d0B, d0u, d0a;
             double d0_out=5.0;
             string seqM, seqxA, seqyA;// for output alignment
             double rmsd0 = 0.0;
             int L_ali;                // Aligned length in standard_TMscore
             double Liden=0;
-            double TM_ali, rmsd_ali;  // TMscore and rmsd in standard_TMscore
+            double TM_ali = 0, rmsd_ali = 0;  // TMscore and rmsd in standard_TMscore
             int n_ali=0;
             int n_ali8=0;
 
@@ -917,8 +917,8 @@ int MMdock(const string &xname, const string &yname, const string &fname_super,
     int    i,j;                    // chain index
     int    xlen, ylen;             // chain length
     double **xa, **ya;             // structure of single chain
-    char   *seqx, *seqy;           // for the protein sequence 
-    char   *secx, *secy;           // for the secondary structure 
+    char   *seqx = NULL, *seqy = NULL; // for the protein sequence 
+    char   *secx = NULL, *secy = NULL; // for the secondary structure 
     int    xlen_aa,ylen_aa;        // total length of protein
     int    xlen_na,ylen_na;        // total length of RNA/DNA
     vector<string> resi_vec1;  // residue index for chain1
@@ -960,14 +960,14 @@ int MMdock(const string &xname, const string &yname, const string &fname_super,
         double t0[3], u0[3][3];
         double TM1, TM2;
         double TM3, TM4, TM5;     // for a_opt, u_opt, d_opt
-        double d0_0, TM_0;
+        double d0_0 = 0, TM_0 = 0;
         double d0A, d0B, d0u, d0a;
         double d0_out=5.0;
         string seqM, seqxA, seqyA;// for output alignment
         double rmsd0 = 0.0;
         int L_ali;                // Aligned length in standard_TMscore
         double Liden=0;
-        double TM_ali, rmsd_ali;  // TMscore and rmsd in standard_TMscore
+        double TM_ali = 0, rmsd_ali = 0;  // TMscore and rmsd in standard_TMscore
         int n_ali=0;
         int n_ali8=0;
 
@@ -1095,14 +1095,14 @@ int MMdock(const string &xname, const string &yname, const string &fname_super,
             double t0[3], u0[3][3];
             double TM1, TM2;
             double TM3, TM4, TM5;     // for a_opt, u_opt, d_opt
-            double d0_0, TM_0;
+            double d0_0 = 0, TM_0 = 0;
             double d0A, d0B, d0u, d0a;
             double d0_out=5.0;
             string seqM, seqxA, seqyA;// for output alignment
             double rmsd0 = 0.0;
             int L_ali;                // Aligned length in standard_TMscore
             double Liden=0;
-            double TM_ali, rmsd_ali;  // TMscore and rmsd in standard_TMscore
+            double TM_ali = 0, rmsd_ali = 0;  // TMscore and rmsd in standard_TMscore
             int n_ali=0;
             int n_ali8=0;
 
@@ -1241,14 +1241,14 @@ int MMdock(const string &xname, const string &yname, const string &fname_super,
         double t0[3], u0[3][3];
         double TM1, TM2;
         double TM3, TM4, TM5;     // for a_opt, u_opt, d_opt
-        double d0_0, TM_0;
+        double d0_0 = 0, TM_0 = 0;
         double d0A, d0B, d0u, d0a;
         double d0_out=5.0;
         string seqM, seqxA, seqyA;// for output alignment
         double rmsd0 = 0.0;
         int L_ali;                // Aligned length in standard_TMscore
         double Liden=0;
-        double TM_ali, rmsd_ali;  // TMscore and rmsd in standard_TMscore
+        double TM_ali = 0, rmsd_ali = 0;  // TMscore and rmsd in standard_TMscore
         int n_ali=0;
         int n_ali8=0;
 
@@ -1375,10 +1375,10 @@ int mTMalign(string &xname, string &yname, const string &fname_super,
     vector<string> chainID_list;   // list of chainID
     vector<int> len_vec;           // length of complex
     int    i,j;                    // chain index
-    int    xlen, ylen;             // chain length
+    int    xlen = 0, ylen = 0;             // chain length
     double **xa, **ya;             // structure of single chain
-    char   *seqx, *seqy;           // for the protein sequence 
-    char   *secx, *secy;           // for the secondary structure 
+    char   *seqx = NULL, *seqy = NULL; // for the protein sequence 
+    char   *secx = NULL, *secy = NULL; // for the secondary structure 
     int    len_aa,len_na;          // total length of protein and RNA/DNA
     vector<string> resi_vec;       // residue index for chain
 
@@ -1432,14 +1432,14 @@ int mTMalign(string &xname, string &yname, const string &fname_super,
             double t0[3], u0[3][3];
             double TM1, TM2;
             double TM3, TM4, TM5;     // for a_opt, u_opt, d_opt
-            double d0_0, TM_0;
+            double d0_0 = 0, TM_0 = 0;
             double d0A, d0B, d0u, d0a;
             double d0_out=5.0;
             string seqM, seqxA, seqyA;// for output alignment
             double rmsd0 = 0.0;
             int L_ali;                // Aligned length in standard_TMscore
             double Liden=0;
-            double TM_ali, rmsd_ali;  // TMscore and rmsd in standard_TMscore
+            double TM_ali = 0, rmsd_ali = 0;  // TMscore and rmsd in standard_TMscore
             int n_ali=0;
             int n_ali8=0;
 
@@ -1592,14 +1592,14 @@ int mTMalign(string &xname, string &yname, const string &fname_super,
             double t0[3], u0[3][3];
             double TM1, TM2;
             double TM3, TM4, TM5;     // for a_opt, u_opt, d_opt
-            double d0_0, TM_0;
+            double d0_0 = 0, TM_0 = 0;
             double d0A, d0B, d0u, d0a;
             double d0_out=5.0;
             string seqM, seqxA, seqyA;// for output alignment
             double rmsd0 = 0.0;
             int L_ali;                // Aligned length in standard_TMscore
             double Liden=0;
-            double TM_ali, rmsd_ali;  // TMscore and rmsd in standard_TMscore
+            double TM_ali = 0, rmsd_ali = 0;  // TMscore and rmsd in standard_TMscore
             int n_ali=0;
             int n_ali8=0;
 
@@ -1683,14 +1683,14 @@ int mTMalign(string &xname, string &yname, const string &fname_super,
             /* declare variable specific to this pair of TMalign */
             double TM1, TM2;
             double TM3, TM4, TM5;     // for a_opt, u_opt, d_opt
-            double d0_0, TM_0;
+            double d0_0 = 0, TM_0 = 0;
             double d0A, d0B, d0u, d0a;
             double d0_out=5.0;
             string seqM, seqxA, seqyA;// for output alignment
             double rmsd0 = 0.0;
             int L_ali;                // Aligned length in standard_TMscore
             double Liden=0;
-            double TM_ali, rmsd_ali;  // TMscore and rmsd in standard_TMscore
+            double TM_ali = 0, rmsd_ali = 0;  // TMscore and rmsd in standard_TMscore
             int n_ali=0;
             int n_ali8=0;
             int *invmap = new int[ylen+1];
@@ -1843,14 +1843,14 @@ int mTMalign(string &xname, string &yname, const string &fname_super,
                 /* declare variable specific to this pair of TMalign */
                 double TM1, TM2;
                 double TM3, TM4, TM5;     // for a_opt, u_opt, d_opt
-                double d0_0, TM_0;
+                double d0_0 = 0, TM_0 = 0;
                 double d0A, d0B, d0u, d0a;
                 double d0_out=5.0;
                 string seqM, seqxA, seqyA;// for output alignment
                 double rmsd0 = 0.0;
                 int L_ali=0;              // Aligned length in standard_TMscore
                 double Liden=0;
-                double TM_ali, rmsd_ali;  // TMscore and rmsd in standard_TMscore
+                double TM_ali = 0, rmsd_ali = 0;  // TMscore and rmsd in standard_TMscore
                 int n_ali=0;
                 int n_ali8=0;
                 int *invmap = new int[ylen+1];
