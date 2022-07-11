@@ -1542,7 +1542,8 @@ int mTMalign(string &xname, string &yname, const string &fname_super,
         //secy = new char[ylen+1];
         //NewArray(&ya, ylen, 3);
         //copy_chain_data(a_vec[repr_idx],seq_vec[repr_idx],sec_vec[repr_idx], ylen,ya,seqy,secy);
-        for (r=0;r<sequence.size();r++) sequence[r].clear(); sequence.clear();
+        for (r=0;r<sequence.size();r++) sequence[r].clear();
+	sequence.clear();
         sequence.push_back("");
         sequence.push_back("");
         for (i=0;i<chain_num;i++)
@@ -1660,7 +1661,8 @@ int mTMalign(string &xname, string &yname, const string &fname_super,
         double **ya_ext;             // structure of single chain
         char   *seqy_ext;            // for the protein sequence 
         char   *secy_ext;            // for the secondary structure 
-        for (r=0;r<msa.size();r++) msa[r].clear(); msa.clear();
+        for (r=0;r<msa.size();r++) msa[r].clear();
+	msa.clear();
         msa.assign(ylen,""); // row is position along msa; column is sequence
         vector<string> msa_ext;      // row is position along msa; column is sequence
         for (r=0;r<ylen;r++) msa[r]=seqy[r];
