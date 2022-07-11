@@ -412,7 +412,7 @@ int NWalign_main(const char *seqx, const char *seqy, const int xlen,
         for (j=0;j<ylen+1;j++)
         {
             if (i*j==0) S[i][j]=0;
-            else S[i][j]=BLOSUM[seqx[i-1]][seqy[j-1]];
+            else S[i][j]=BLOSUM[size_t(seqx[i-1])][size_t(seqy[j-1])];
         }
     }
 
