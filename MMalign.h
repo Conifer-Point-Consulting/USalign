@@ -437,8 +437,8 @@ double homo_refined_greedy_search(double **TMave_mat,int *assign1_list,
     int ui,uj,ut_idx;
     double TMscore=0; // pseudo TM-score
     double TMsum  =0;
-    double TMnow  =0;
-    double TMmax  =0;
+    //double TMnow  =0;
+    //double TMmax  =0;
     double dd=0;
 
     size_t  total_pair=chain1_num*chain2_num; // total pair
@@ -2526,7 +2526,7 @@ int TMalign_dimer_main(double **xa, double **ya,
     TM2 = TMscore8_search(r1, r2, xtm, ytm, xt, n_ali8, t, u, simplify_step,
         score_sum_method, &rmsd, local_d0_search, Lnorm, score_d8, d0);
 
-    double Lnorm_d0;
+    //double Lnorm_d0;
     if (a_opt>0)
     {
         //normalized by average length of structures A, B
@@ -2562,7 +2562,7 @@ int TMalign_dimer_main(double **xa, double **ya,
         d0_out=d0_scale;
         d0_0=d0_scale;
         //Lnorm_0=ylen;
-        Lnorm_d0=Lnorm_0;
+        //Lnorm_d0=Lnorm_0;
         local_d0_search = d0_search;
         TM5 = TMscore8_search(r1, r2, xtm, ytm, xt, n_ali8, t0, u0,
             simplify_step, score_sum_method, &rmsd, local_d0_search, Lnorm,
