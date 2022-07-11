@@ -17,8 +17,8 @@ int doAlignment(string pdb1, string pdb2, TMatrix &tmatrix) {
     vector<string> sequence; // get value from alignment file
     double Lnorm_ass = 0, d0_scale = 0;
 
-    bool h_opt = false; // print full help message
-    bool v_opt = false; // print version
+    //bool h_opt = false; // print full help message
+    //bool v_opt = false; // print version
     bool m_opt = false; // flag for -m, output rotation matrix
     int  i_opt = 0;     // 1 for -i, 3 for -I
     int  o_opt = 0;     // 1 for -o, 2 for -rasmol
@@ -26,7 +26,7 @@ int doAlignment(string pdb1, string pdb2, TMatrix &tmatrix) {
     bool u_opt = false; // flag for -u, normalized by user specified length
     bool d_opt = false; // flag for -d, user specified d0
 
-    bool   full_opt  = false;// do not show chain level alignment
+    //bool   full_opt  = false;// do not show chain level alignment
     double TMcut     =-1;
     bool   se_opt    =false;
     int    infmt1_opt=-1;    // PDB or PDBx/mmCIF format for chain_1
