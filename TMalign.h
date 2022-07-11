@@ -3199,7 +3199,7 @@ int TMalign_main(double **xa, double **ya,
     TM2 = TMscore8_search(r1, r2, xtm, ytm, xt, n_ali8, t, u, simplify_step,
         score_sum_method, &rmsd, local_d0_search, Lnorm, score_d8, d0);
 
-    double Lnorm_d0;
+    //double Lnorm_d0 = 0;
     if (a_opt>0)
     {
         //normalized by average length of structures A, B
@@ -3235,7 +3235,7 @@ int TMalign_main(double **xa, double **ya,
         d0_out=d0_scale;
         d0_0=d0_scale;
         //Lnorm_0=ylen;
-        Lnorm_d0=Lnorm_0;
+        //Lnorm_d0=Lnorm_0;
         local_d0_search = d0_search;
         TM5 = TMscore8_search(r1, r2, xtm, ytm, xt, n_ali8, t0, u0,
             simplify_step, score_sum_method, &rmsd, local_d0_search, Lnorm,
