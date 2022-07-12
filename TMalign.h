@@ -3,6 +3,7 @@
 #ifndef TMalign_h
 #define TMalign_h 1
 
+#include <memory>
 #include "param_set.h"
 #include "NW.h"
 #include "Kabsch.h"
