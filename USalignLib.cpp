@@ -1,3 +1,7 @@
+
+#ifdef COMPILE_FOR_LINUX
+#pragma GCC diagnostic ignored "-Wsign-compare"
+#endif
 #include "USalignLib.h"
 
 using namespace std;

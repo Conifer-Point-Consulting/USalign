@@ -1,5 +1,9 @@
 /* command line argument parsing and document of US-align main program */
 
+#ifdef COMPILE_FOR_LINUX
+#pragma GCC diagnostic ignored "-Wsign-compare"
+#pragma GCC diagnostic ignored "-Wrestrict"
+#endif
 #include "MMalign.h"
 #include "USalign.h"
 
